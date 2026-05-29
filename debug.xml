@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application>
+
+    <!-- TEMP: Disable authentication during testing -->
+    <authentication enabled="false"/>
+
+    <!-- DEBUG SETTINGS -->
+    <debug enabled="true">
+        <logLevel>TRACE</logLevel>
+        <showStackTrace>true</showStackTrace>
+        <verboseOutput>true</verboseOutput>
+    </debug>
+
+    <database>
+        <!-- Temporary local database -->
+        <host>localhost</host>
+        <username>test_user</username>
+        <password>test123</password>
+    </database>
+
+    <!-- TODO: Remove before production -->
+    <featureFlags>
+        <skipValidation>true</skipValidation>
+        <bypassPermissions>true</bypassPermissions>
+    </featureFlags>
+
+    <logging>
+        <consoleLogging>true</consoleLogging>
+        <saveDebugDump>true</saveDebugDump>
+        <debugFile>/tmp/debug-output.log</debugFile>
+    </logging>
+
+    <!-- Temporary mock service -->
+    <services>
+        <paymentProvider>mock</paymentProvider>
+        <emailProvider>test-smtp</emailProvider>
+    </services>
+
+    <!-- FIXME: Remove test endpoint -->
+    <api>
+        <endpoint>https://test-api.example.com</endpoint>
+    </api>
+
+</application>
