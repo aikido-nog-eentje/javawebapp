@@ -11,15 +11,14 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.3.1.RELEASE</version>
+		<version>4.0.9</version>
 		<relativePath/>
 	</parent>
 
 	<!-- Component Version Properties -->
 	<properties>
-		<spring.version>4.3.10.RELEASE</spring.version>
-		<springboot.version>2.3.1.RELEASE</springboot.version>
-		<fileupload.version>1.3.2</fileupload.version>
+		<springboot.version>4.0.9</springboot.version>
+		<fileupload.version>1.6.0</fileupload.version>
 	</properties>
 
 	<!-- Dependencies begin here -->
@@ -71,12 +70,7 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!-- Logging dependencies -->
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.7.7</version>
-		</dependency>
+		<!-- Logging dependencies (slf4j-log4j12 removed: it pulled log4j:log4j 1.x which has no fix for CVE-2023-26464; Spring Boot 4.x uses logback by default) -->
 
 		<!-- Apache Commons dependencies -->
 		<dependency>
@@ -89,7 +83,7 @@
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-			<version>2.4</version>
+			<version>2.14.0</version>
 		</dependency>
 
 		<!-- Vuln Method libs -->
@@ -97,6 +91,39 @@
 			<groupId>org.apache.sling</groupId>
 			<artifactId>maven-sling-plugin</artifactId>
 			<version>2.0.4-incubator</version>
+			<exclusions>
+				<!-- commons-httpclient:commons-httpclient 3.1 has no patched release;
+				     exclude it to remove CVE-2012-5783 from the classpath. -->
+				<exclusion>
+					<groupId>commons-httpclient</groupId>
+					<artifactId>commons-httpclient</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.sling</groupId>
+			<artifactId>org.apache.sling.api</artifactId>
+			<version>2.4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5.14</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.santuario</groupId>
+			<artifactId>xmlsec</artifactId>
+			<version>2.2.6</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.plexus</groupId>
+			<artifactId>plexus-utils</artifactId>
+			<version>3.6.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.plexus</groupId>
+			<artifactId>plexus-archiver</artifactId>
+			<version>4.8.0</version>
 		</dependency>
 
 		<dependency>
@@ -108,13 +135,12 @@
 		<dependency>
 			<groupId>org.keycloak</groupId>
 			<artifactId>keycloak-saml-core</artifactId>
-			<version>1.8.1.Final</version>
+			<version>26.6.2</version>
 		</dependency>
 
 		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.48</version>
+			<groupId>com.mysql</groupId>
+			<artifactId>mysql-connector-j</artifactId>
 		</dependency>
 
 		<dependency>
@@ -130,9 +156,28 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-collections4</artifactId>
-			<version>4.0</version>
+			<version>4.1</version>
 		</dependency>
 	</dependencies>
+
+	<dependencyManagement>
+		<dependencies>
+			<!-- plexus-archiver 4.8.0 pulls commons-compress 1.23.0 (CVE-2023-42503,
+			     CVE-2024-25710, CVE-2024-26308); override to 1.26.0 which fixes all three. -->
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-compress</artifactId>
+				<version>1.26.0</version>
+			</dependency>
+			<!-- plexus-archiver 4.8.0 pulls snappy 0.4 (CVE-2024-36124);
+			     override to 0.5 which fixes it. -->
+			<dependency>
+				<groupId>org.iq80.snappy</groupId>
+				<artifactId>snappy</artifactId>
+				<version>0.5</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 	<build>
 		<finalName>verademo</finalName>
